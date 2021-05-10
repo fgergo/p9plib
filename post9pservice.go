@@ -69,6 +69,10 @@ func nsfromdisplay() (string, error) {
 	if disp == "" && runtime.GOOS == "darwin" {
 		disp = ":0.0"
 	}
+	
+	if disp == "" && runtime.GOOS == "windows" {
+		return "", errors.New("environment variable NAMESPACE not set")
+	}
 
 	if disp == "" {
 		return "", errors.New("$DISPLAY not set")
