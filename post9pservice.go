@@ -120,5 +120,10 @@ func Getns() (string, error) {
 	if err != nil {
 		return ns, err
 	}
+
+	if ns != "" {
+                return ns, nil
+        }
+
 	return "", errors.New("$NAMESPACE not set")
 }
