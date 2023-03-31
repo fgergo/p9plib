@@ -14,7 +14,7 @@ import (
 )
 
 type Stdio9pserve struct {
-	Stdin9pserve io.WriteCloser
+	Stdin9pserve  io.WriteCloser
 	Stdout9pserve io.ReadCloser
 }
 
@@ -44,7 +44,7 @@ func Post9pservice(srv *Stdio9pserve, name string) error {
 	}
 
 	var err error
-	cmd := exec.Command("9pserve", "-l", "-n", addr)
+	cmd := exec.Command("9pserve", "-u", addr)
 	srv.Stdin9pserve, err = cmd.StdinPipe()
 	if err != nil {
 		return err
@@ -69,7 +69,7 @@ func nsfromdisplay() (string, error) {
 	if disp == "" && runtime.GOOS == "darwin" {
 		disp = ":0.0"
 	}
-	
+
 	if disp == "" && runtime.GOOS == "windows" {
 		return "", errors.New("environment variable NAMESPACE not set")
 	}
@@ -79,8 +79,12 @@ func nsfromdisplay() (string, error) {
 	}
 
 	// canonicalize: xxx:0.0 => xxx:0
-	if strings.HasSuffix(disp, ":0") {
-		disp = disp[:len(disp)-2]
+	i := strings.LastIndex(disp, ":")
+	if i >= 0 {
+		dot := strings.LastIndex(disp, ".")
+		if dot >= i {
+			disp = disp[:dot]
+		}
 	}
 
 	/* turn /tmp/launch/:0 into _tmp_launch_:0 (OS X 10.5) */
@@ -102,7 +106,7 @@ func nsfromdisplay() (string, error) {
 		return "", errors.New(fmt.Sprintf("stat %s, %v", ns, err))
 	}
 
-	if (d.Mode() & 0777) != 0700 {		// TODO: add check '|| uid!=owner' of namespace directory
+	if (d.Mode() & 0777) != 0700 { // TODO: add check '|| uid!=owner' of namespace directory
 		return "", errors.New(fmt.Sprintf("bad name space dir %s", ns))
 	}
 
@@ -122,8 +126,8 @@ func Getns() (string, error) {
 	}
 
 	if ns != "" {
-                return ns, nil
-        }
+		return ns, nil
+	}
 
 	return "", errors.New("$NAMESPACE not set")
 }
