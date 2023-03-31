@@ -82,7 +82,7 @@ func nsfromdisplay() (string, error) {
 	i := strings.LastIndex(disp, ":")
 	if i >= 0 {
 		dot := strings.LastIndex(disp, ".")
-		if dot >= i {
+		if dot > i {
 			disp = disp[:dot]
 		}
 	}
