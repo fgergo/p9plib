@@ -44,7 +44,7 @@ func Post9pservice(srv *Stdio9pserve, name string) error {
 	}
 
 	var err error
-	cmd := exec.Command("9pserve", "-u", addr)
+	cmd := exec.Command("9pserve", addr)
 	srv.Stdin9pserve, err = cmd.StdinPipe()
 	if err != nil {
 		return err
